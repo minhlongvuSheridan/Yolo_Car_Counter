@@ -4,15 +4,23 @@ import math
 
 # yolov8 specify the version and l specify the weight 
 # more weight more accurate and detailed but also slower
-model = YOLO('yolov11l.pt')
+model = YOLO('yolov8l.pt')
+model_names = model.names
 
 
 cap = cv2.VideoCapture("./video/cars1.mp4")
+# the mask is created by using canva where you cover all unnessary details using
+# a black box
+left_mask = cv2.imread("./mask/left_mask.png")
+
 
 while True:
     success, img = cap.read()
+    
+    imgRegion = cv2.bitwise_and(img, left_mask)
+    
     # stream = True use generator which is more efficient
-    results = model(img, stream = True)
+    results = model(imgRegion, stream = True)
     # the model always return list of Resutls 
     # each Results is basically an image coressponding with input image
     # each Results contains detect objects which are bounding bosex
@@ -31,15 +39,16 @@ while True:
             conf = math.ceil(box.conf[0] * 100) 
             # box.cls[0] only give us the id. We need to map it with actual class
             # each model might have varying class name, thus we will use model.names to get all the name
-            className = int(box.cls[0])
+            currentClass = model_names[int(box.cls[0])]
             
-            
-            # Draw the box
-            cv2.rectangle(img,(x1,y1), (x2,y2),(13, 13, 13), 1)
-            # Write the class name and confidence percentage
-            cv2.putText(img, f"{model.names[className]}: {conf}%",(x1,y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (51, 255, 51), 1)
+            if currentClass == "car":
+                # Draw the box
+                cv2.rectangle(img,(x1,y1), (x2,y2),(13, 13, 13), 1)
+                # Write the class name and confidence percentage
+                cv2.putText(img, f"{currentClass}: {conf}%",(x1,y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (51, 255, 51), 1)
             
     cv2.imshow("Image", img)
+    cv2.imshow("ImageRegion", imgRegion)
     cv2.waitKey(1)
 
 
