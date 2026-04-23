@@ -1,3 +1,11 @@
+'''
+Author: Minh Long Vu
+Application: Inspired by the tutorial of https://www.youtube.com/watch?v=WgPbbWmnXJ8&t=7189s. I develope the YOLO model further
+by detecting two roads instead of one
+'''
+
+
+
 from ultralytics import YOLO
 import cv2
 import math
