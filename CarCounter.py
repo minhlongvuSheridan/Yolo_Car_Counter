@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import cv2
 import math
+from sort import *
 
 # yolov8 specify the version and l specify the weight 
 # more weight more accurate and detailed but also slower
@@ -12,7 +13,11 @@ cap = cv2.VideoCapture("./video/cars1.mp4")
 # the mask is created by using canva where you cover all unnessary details using
 # a black box
 left_mask = cv2.imread("./mask/left_mask.png")
+limits = [190, 200, 230, 210]
 
+# tracking
+# max_age: maximum numnber of frames the we still recognize it
+tracker = Sort(max_age = 20, min_hits = 2,iou_threshold=0.2)
 
 while True:
     success, img = cap.read()
@@ -24,6 +29,9 @@ while True:
     # the model always return list of Resutls 
     # each Results is basically an image coressponding with input image
     # each Results contains detect objects which are bounding bosex
+    
+    
+    detections = np.empty((0, 5))
     for result in results:
         # 2D tensor of detected bouding box
         boxes = result.boxes
@@ -41,15 +49,37 @@ while True:
             # each model might have varying class name, thus we will use model.names to get all the name
             currentClass = model_names[int(box.cls[0])]
             
-            if currentClass == "car":
-                # Draw the box
-                cv2.rectangle(img,(x1,y1), (x2,y2),(13, 13, 13), 1)
-                # Write the class name and confidence percentage
-                cv2.putText(img, f"{currentClass}: {conf}%",(x1,y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (51, 255, 51), 1)
+            cv2.rectangle(imgRegion,(x1,y1), (x2,y2),(13, 13, 13), 1)
+        # Write the class name and confidence percentage
+            cv2.putText(imgRegion, f"{currentClass}: {conf}%",(x1,y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (51, 255, 51), 1)
             
+            
+            if (currentClass == "car" or currentClass == "truck" or currentClass == "bus") and conf > 50:
+                # Draw the box
+                print(conf)
+                currentArray = np.array([x1, y1, x2, y2, conf])
+                detections = np.vstack((detections, currentArray))
+    trackerResults = tracker.update(detections)
+    # cv2.line(img, 
+    #             (int(limits[0]),
+    #             int(limits[1]))
+    #             (int(limits[2]),
+    #             int(limits[3])
+    #             ),
+    #          (0,0,255)
+    #          ,5)
+    for trackerResult in trackerResults:
+        x1, y1, x2, y2, id = trackerResult
+        x1, y1, x2, y2, id = int(x1), int(y1), int(x2), int(y2), int(id)
+        print(trackerResult)
+        cv2.rectangle(img,(x1,y1), (x2,y2),(13, 13, 13), 1)
+        # Write the class name and confidence percentage
+        cv2.putText(img, f"{currentClass}: {id}",(x1,y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (51, 255, 51), 1)
+        
+        
     cv2.imshow("Image", img)
     cv2.imshow("ImageRegion", imgRegion)
-    cv2.waitKey(1)
+    cv2.waitKey(0)
 
 
 # show will display in seperate window, we are having trouble with cv2.waitKey() since it doesn't work
