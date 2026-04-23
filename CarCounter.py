@@ -13,7 +13,7 @@ cap = cv2.VideoCapture("./video/cars1.mp4")
 # the mask is created by using canva where you cover all unnessary details using
 # a black box
 left_mask = cv2.imread("./mask/left_mask.png")
-limits = [190, 200, 230, 210]
+limits = [220, 230, 300, 230]
 
 # tracking
 # max_age: maximum numnber of frames the we still recognize it
@@ -60,14 +60,9 @@ while True:
                 currentArray = np.array([x1, y1, x2, y2, conf])
                 detections = np.vstack((detections, currentArray))
     trackerResults = tracker.update(detections)
-    # cv2.line(img, 
-    #             (int(limits[0]),
-    #             int(limits[1]))
-    #             (int(limits[2]),
-    #             int(limits[3])
-    #             ),
-    #          (0,0,255)
-    #          ,5)
+    
+    # draw the line
+    cv2.line(img, (limits[0],limits[1]),(limits[2],limits[3]),(0,0,255),5)
     for trackerResult in trackerResults:
         x1, y1, x2, y2, id = trackerResult
         x1, y1, x2, y2, id = int(x1), int(y1), int(x2), int(y2), int(id)
