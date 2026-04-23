@@ -122,9 +122,3 @@ while True:
     cv2.imshow("Image2", rightRegion)
     cv2.waitKey(1)
 
-
-# show will display in seperate window, we are having trouble with cv2.waitKey() since it doesn't work
-# so we will use save to save image
-
-
-
