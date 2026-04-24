@@ -3,7 +3,8 @@
 
 https://github.com/user-attachments/assets/868051a8-8baa-429f-b2e7-ba4330605916
 
-
+# Run the code
+python -u CarCounter.py
 
 
 
