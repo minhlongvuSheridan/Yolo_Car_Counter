@@ -63,7 +63,7 @@ while True:
     
     
     cv2.putText(img, "Minh Long Vu",(0,20), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (1, 50, 32), 1)
-    # cv2.imshow("Image", img)
+    cv2.imshow("Image", img)
     cv2.imwrite("./video/demo.mp4",img)
     out.write(img)
     cv2.waitKey(1)
