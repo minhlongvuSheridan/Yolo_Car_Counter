@@ -1,5 +1,12 @@
 # Demo
-https://github.com/user-attachments/assets/301281ed-a9da-4d79-8b60-306e1355aa59
+
+
+https://github.com/user-attachments/assets/868051a8-8baa-429f-b2e7-ba4330605916
+
+# Run the code
+python -u CarCounter.py
+
+
 
 # Limitations
 - The tracking sometimes doesn't work well.
